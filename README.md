@@ -46,7 +46,7 @@ Track wildfires, earthquakes, floods, droughts, volcanic activity, severe storms
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16.4.2 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | UI Components | shadcn/ui |
