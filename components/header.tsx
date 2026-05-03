@@ -15,7 +15,9 @@ export default function Header({ eventCount, loading, days }: Props) {
 
   useEffect(() => {
     const update = () => {
-      setTime(new Date().toISOString().replace("T", " ").substring(0, 19) + " UTC");
+      setTime(
+        new Date().toISOString().replace("T", " ").substring(0, 19) + " UTC",
+      );
       setTick((t) => !t);
     };
     update();
@@ -28,8 +30,13 @@ export default function Header({ eventCount, loading, days }: Props) {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 h-10 border-b border-[#0d1525]">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <span className="text-[#00FF9C] text-[10px] tracking-[3px] sm:tracking-[4px] shrink-0">◈ NASA / GSFC</span>
-          <Separator orientation="vertical" className="h-3 bg-[#1a2840] shrink-0" />
+          <span className="text-[#00FF9C] text-[10px] tracking-[3px] sm:tracking-[4px] shrink-0">
+            ◈ NASA / GSFC
+          </span>
+          <Separator
+            orientation="vertical"
+            className="h-3 bg-[#1a2840] shrink-0"
+          />
           <span className="text-[#4a6080] text-[10px] tracking-[1px] sm:tracking-[2px] truncate hidden sm:block">
             EARTH OBSERVATORY NETWORK EVENT TRACKER
           </span>
@@ -48,7 +55,9 @@ export default function Header({ eventCount, loading, days }: Props) {
           <span className="text-[#4a6080] text-[9px] font-mono sm:hidden">
             {time.substring(0, 10)} {time.substring(11, 19)} UTC
           </span>
-          <span className="text-[#4a6080] text-[11px] font-mono hidden sm:block">{time}</span>
+          <span className="text-[#4a6080] text-[11px] font-mono hidden sm:block">
+            {time}
+          </span>
         </div>
       </div>
 
@@ -66,7 +75,7 @@ export default function Header({ eventCount, loading, days }: Props) {
             <span className="text-[#C8D8E8]">TERRA</span>
           </h1>
           <p className="text-[#4a6080] text-[10px] sm:text-[11px] tracking-[1px] sm:tracking-[3px] mt-1 sm:mt-2">
-            OBSERVING EARTH FROM ABOVE · POWERED BY NASA EONET
+            OBSERVING EARTH FROM ABOVE · NASA EONET + GDACS
           </p>
         </div>
 
@@ -79,7 +88,7 @@ export default function Header({ eventCount, loading, days }: Props) {
             pulse
           />
           <StatPill label="WINDOW" value={`${days}D`} color="#0066FF" />
-          <StatPill label="SOURCE" value="EONET" color="#4a6080" />
+          <StatPill label="SOURCE" value="2" color="#4a6080" />
           <StatPill label="STATUS" value="LIVE" color="#FF3A6E" pulse />
         </div>
       </div>
@@ -107,7 +116,10 @@ function StatPill({
         animation: pulse ? "pulse-glow 2s ease-in-out infinite" : "none",
       }}
     >
-      <span className="text-[8px] tracking-[3px]" style={{ color, opacity: 0.7 }}>
+      <span
+        className="text-[8px] tracking-[3px]"
+        style={{ color, opacity: 0.7 }}
+      >
         {label}
       </span>
       <span

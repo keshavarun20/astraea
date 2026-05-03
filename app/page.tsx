@@ -1,125 +1,114 @@
 "use client";
+
+import { useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
+import EventGrid from "@/components/event-grid";
+import { useEonet, useGdacs } from "@/lib/hooks/useEonet";
+import { normalizeEonet, normalizeGdacs } from "@/lib/types";
 import { ALL_CATEGORIES } from "@/lib/constants";
-import { useEonet } from "@/lib/hooks/useEonet";
-import { useEffect, useState, useMemo } from "react";
 
 export default function Home() {
- const [days, setDays] = useState(7);
+  const [days, setDays] = useState(30);
+  const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
-  const [search, setSearch] = useState(""); 
 
-  const { data, isLoading } = useEonet(days, 100);
+  const { data, isLoading: eonetLoading } = useEonet(days, 100);
+  const { data: gdacsData, isLoading: gdacsLoading } = useGdacs();
 
-  // Build categoryCounts from events
-  const categoryCounts: Record<string, number> = {};
-  for (const event of data?.events ?? []) {
-    for (const cat of event.categories) {
-      categoryCounts[cat.title] = (categoryCounts[cat.title] ?? 0) + 1;
+  const isLoading = eonetLoading || gdacsLoading;
+
+  const allEvents = useMemo(() => {
+    const eonet = (data?.events ?? []).map(normalizeEonet);
+    const gdacs = (gdacsData?.events ?? []).map(normalizeGdacs);
+    return [...eonet, ...gdacs].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [data, gdacsData]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const ev of allEvents) {
+      counts[ev.category] = (counts[ev.category] ?? 0) + 1;
     }
-  }
+    return counts;
+  }, [allEvents]);
 
-   const filtered = useMemo(() => {
-    return (data?.events ?? []).filter(ev => {  // ← was `event.filter`, now `(data?.events ?? []).filter`
+  const filtered = useMemo(() => {
+    return allEvents.filter((ev) => {
       const matchesCat =
-        selectedCategory === ALL_CATEGORIES ||
-        ev.categories.some(c => c.title === selectedCategory);
+        selectedCategory === ALL_CATEGORIES || ev.category === selectedCategory;
       const matchesSearch =
         !search ||
         ev.title.toLowerCase().includes(search.toLowerCase()) ||
-        ev.categories.some(c => c.title.toLowerCase().includes(search.toLowerCase()));
+        ev.category.toLowerCase().includes(search.toLowerCase()) ||
+        (ev.country ?? "").toLowerCase().includes(search.toLowerCase());
       return matchesCat && matchesSearch;
     });
-  }, [data?.events, selectedCategory, search]);
+  }, [allEvents, selectedCategory, search]);
+
+  const handleDaysChange = (d: number) => {
+    setDays(d);
+    setSelectedCategory(ALL_CATEGORIES);
+    setSearch("");
+  };
 
   return (
-    <div style={{ position: "relative", zIndex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header
-        eventCount={data?.events.length ?? 0}
-        loading={isLoading}
-        days={days}
-      />
+    <div className="relative z-[1] min-h-screen flex flex-col">
+      <Header eventCount={filtered.length} loading={isLoading} days={days} />
 
       {/* Search bar */}
-      <div style={{
-        borderBottom: "1px solid #1a2840",
-        background: "rgba(8,14,26,0.9)",
-        padding: "10px 24px",
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        position: "sticky",
-        top: 0,
-        zIndex: 8,
-      }}>
-        <span style={{ color: "#00FF9C", fontSize: 14, flexShrink: 0 }}>⌕</span>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="SEARCH EVENTS, CATEGORIES..."
-          style={{
-            background: "transparent",
-            border: "none",
-            outline: "none",
-            color: "#C8D8E8",
-            fontFamily: "Share Tech Mono, monospace",
-            fontSize: 11,
-            letterSpacing: 2,
-            flex: 1,
-            caretColor: "#00FF9C",
-          }}
-        />
-        {search && (
-          <button
-            onClick={() => setSearch("")}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#4a6080",
-              cursor: "pointer",
-              fontSize: 12,
-              fontFamily: "Share Tech Mono, monospace",
-            }}
-          >
-            ✕ CLEAR
-          </button>
-        )}
-        <span style={{ fontSize: 9, color: "#4a6080", letterSpacing: 2, flexShrink: 0 }}>
-          {filtered.length} EVENTS SHOWN
-        </span>
+      <div className="sticky top-0 z-[8] border-b border-[#1a2840] bg-[#04060D]/95 backdrop-blur-sm">
+        <div className="flex items-center gap-3 px-6 h-11">
+          <Search className="w-4 h-4 text-[#00FF9C] shrink-0" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="SEARCH EVENTS, CATEGORIES, COUNTRIES..."
+            className="flex-1 bg-transparent border-none outline-none text-[#C8D8E8] placeholder:text-[#4a6080] text-[11px] tracking-widest caret-[#00FF9C]"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="flex items-center gap-1.5 text-[10px] tracking-widest text-[#4a6080] hover:text-[#C8D8E8] transition-colors"
+            >
+              <X className="w-3 h-3" />
+              CLEAR
+            </button>
+          )}
+          <Separator orientation="vertical" className="h-4 bg-[#1a2840]" />
+          <span className="text-[10px] tracking-[3px] text-[#4a6080] shrink-0">
+            {filtered.length} EVENTS
+          </span>
+        </div>
       </div>
 
       {/* Body */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           days={days}
-          onDaysChange={setDays}
+          onDaysChange={handleDaysChange}
           categoryCounts={categoryCounts}
         />
-
-        <main style={{ flex: 1, overflowY: "auto", padding: 16 }}>
-          {/* <EventGrid events={filtered} loading={loading} search={search} /> */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-4">
+            <EventGrid events={filtered} loading={isLoading} search={search} />
+          </div>
         </main>
       </div>
 
       {/* Footer */}
-      <div style={{
-        borderTop: "1px solid #1a2840",
-        padding: "8px 24px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "rgba(4,6,13,0.95)",
-        fontSize: 8,
-        letterSpacing: 2,
-        color: "#4a6080",
-        flexShrink: 0,
-      }}>
-        <span>◈ DATA SOURCE: NASA EONET v3 API // GSFC</span>
-        <span>CLICK ANY EVENT TO EXPAND // OPEN SOURCE</span>
+      <div className="border-t border-[#1a2840] bg-[#04060D]/95 flex justify-between items-center px-6 py-2 shrink-0">
+        <span className="text-[9px] tracking-[3px] text-[#4a6080]">
+          ◈ NASA EONET v3 + GDACS // GLOBAL COVERAGE
+        </span>
+        <span className="text-[9px] tracking-[3px] text-[#4a6080]">
+          CLICK ANY EVENT TO EXPAND · OPEN IN MAPS AVAILABLE
+        </span>
       </div>
     </div>
   );

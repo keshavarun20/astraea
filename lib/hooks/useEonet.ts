@@ -68,3 +68,32 @@ export function useLocation(lat?: number, lon?: number) {
     staleTime: 1000 * 60 * 60 * 24, // 24hr cache
   });
 }
+
+export type GdacsEvent = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  link: string;
+  lat: number;
+  lon: number;
+  alertLevel: string;
+  eventType: string;
+  country: string;
+  severity: string;
+  source: "GDACS";
+};
+
+async function fetchGdacs(): Promise<{ events: GdacsEvent[] }> {
+  const res = await fetch("/api/gdacs");
+  if (!res.ok) throw new Error("Failed to fetch GDACS");
+  return res.json();
+}
+
+export function useGdacs() {
+  return useQuery({
+    queryKey: ["gdacs"],
+    queryFn: fetchGdacs,
+    staleTime: 1000 * 60 * 5,
+  });
+}
