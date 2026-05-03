@@ -1,3 +1,4 @@
+<div align="center">
 
 ```
  ██████╗ ███████╗████████╗██████╗  █████╗ ███████╗ █████╗
@@ -17,6 +18,8 @@
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 ![NASA](https://img.shields.io/badge/NASA_EONET-E03C31?style=for-the-badge&logo=nasa&logoColor=white)
 ![Free & Open Source](https://img.shields.io/badge/Free%20%26%20Open%20Source-00CC66?style=for-the-badge)
+
+</div>
 
 ---
 
@@ -43,11 +46,11 @@ Track wildfires, earthquakes, floods, droughts, volcanic activity, severe storms
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 16.2.4 (App Router) |
+| Framework | Next.js 15 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | UI Components | shadcn/ui |
-| Icons | React Icons, Lucide React | 
+| Icons | React Icons, Lucide React |
 | Data Sources | NASA EONET v3, GDACS |
 | Geocoding | BigDataCloud API |
 
@@ -78,11 +81,10 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-```
 
 ---
 
-## 🖥️ Usage
+## Usage
 
 Once running, the dashboard gives you:
 
@@ -102,7 +104,7 @@ Once running, the dashboard gives you:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 astraea/
@@ -137,7 +139,7 @@ astraea/
 
 ---
 
-## 🌐 Data Sources
+## Data Sources
 
 | Source | Description | Link |
 |---|---|---|
@@ -147,7 +149,7 @@ astraea/
 
 ---
 
-## 📊 Event Categories
+## Event Categories
 
 | Code | Category |
 |---|---|
@@ -165,10 +167,8 @@ astraea/
 
 ---
 
-## 📄 License
+## License
 
 **ASTRAEA is free and open source.**
 
 Do whatever you want with it — use it, modify it, build on top of it, deploy it. No restrictions. No warranties. Just credit appreciated but not required.
-
----
