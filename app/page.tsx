@@ -9,6 +9,7 @@ import EventGrid from "@/components/event-grid";
 import { useEonet, useGdacs } from "@/lib/hooks/useEonet";
 import { normalizeEonet, normalizeGdacs } from "@/lib/types";
 import { ALL_CATEGORIES } from "@/lib/constants";
+import Footer from "@/components/footer";
 
 export default function Home() {
   const [days, setDays] = useState(30);
@@ -102,14 +103,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-[#1a2840] bg-[#04060D]/95 flex justify-between items-center px-6 py-2 shrink-0">
-        <span className="text-[9px] tracking-[3px] text-[#4a6080]">
-          ◈ NASA EONET v3 + GDACS // GLOBAL COVERAGE
-        </span>
-        <span className="text-[9px] tracking-[3px] text-[#4a6080]">
-          CLICK ANY EVENT TO EXPAND · OPEN IN MAPS AVAILABLE
-        </span>
-      </div>
+      <Footer/>
     </div>
   );
 }
